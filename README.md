@@ -34,7 +34,7 @@ Este módulo depende de recursos de red previamente creados. Puede ser invocado 
 
 ```hcl
 module "computo" {
-  source            = "[github.com/TU_USUARIO/terraform-aws-ec2-AUY1105-grupo-3](https://github.com/TU_USUARIO/terraform-aws-ec2-AUY1105-grupo-3)"
+  source            = "[github.com/Ignaciov1/terraform-aws-ec2-AUY1105-grupo-3](https://github.com/Ignaciov1/terraform-aws-ec2-AUY1105-grupo-3)"
   subnet_id         = module.redes.public_subnet_1_id
   security_group_id = module.redes.security_group_ssh_id
 }
