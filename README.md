@@ -1,16 +1,16 @@
-# Módulo de Terraform para Cómputo AWS (EC2)
+# Módulo de Infraestructura de Cómputo (EC2) - AWS
 
-Repositorio destinado al desarrollo del Módulo de Cómputo para la Evaluación Parcial N° 2 de la asignatura **AUY1105 - Infraestructura como Código II**.
+Este repositorio contiene un módulo de Terraform seguro y parametrizado para desplegar instancias de cómputo (EC2) en Amazon Web Services (AWS). Es parte integral de la Evaluación Final Transversal de la asignatura Infraestructura como Código II.
 
-## Objetivos del Repositorio
-El propósito principal de este repositorio es proporcionar un módulo desacoplado y reutilizable para el despliegue seguro y estandarizado de instancias de cómputo (EC2) en Amazon Web Services (AWS), preparado para integrarse de forma fluida con módulos de red externos.
+## Objetivos y Alcance
+Este módulo automatiza el despliegue de servidores virtuales aplicando directamente los estándares de seguridad de la industria. Su diseño permite la inyección dinámica de dependencias (como Subredes y Security Groups) desde módulos externos de red.
 
-## Propósito General del Código
-Este módulo automatiza el aprovisionamiento de capacidad de cómputo aplicando buenas prácticas de seguridad. Despliega:
-- Una instancia EC2 parametrizada (AMI, Tamaño, Red).
-- Un Perfil de Instancia IAM (Instance Profile) generado dinámicamente y asociado al `LabRole`.
-- Almacenamiento raíz (EBS) encriptado por defecto.
-- Configuración de metadatos de instancia exigiendo el uso de tokens (IMDSv2).
+**Características de Seguridad y Optimización:**
+* Asignación dinámica de un IAM Instance Profile (LabRole) mediante la generación de sufijos aleatorios para evitar colisiones.
+* Monitoreo detallado activado (`monitoring = true`).
+* Optimización para Amazon EBS (`ebs_optimized = true`).
+* Cifrado forzado del volumen raíz (`encrypted = true`).
+* Protección contra vulnerabilidades SSRF al exigir el uso de IMDSv2 (`http_tokens = "required"`).
 
 ## Parámetros Configurables (Variables)
 
@@ -29,12 +29,19 @@ Este módulo automatiza el aprovisionamiento de capacidad de cómputo aplicando 
 | `instance_id` | Identificador único de la instancia EC2 desplegada. |
 | `instance_ip` | Dirección IP pública asignada a la instancia para acceso. |
 
-## Instrucciones Básicas de Uso
-Este módulo depende de recursos de red previamente creados. Puede ser invocado de la siguiente manera:
+## Instrucciones de Uso
+
+Para implementar este módulo, debes llamarlo desde tu orquestador principal y pasarle los identificadores de red previamente creados. Asegúrate de apuntar a la versión correcta en la URL:
 
 ```hcl
 module "computo" {
-  source            = "[github.com/Ignaciov1/terraform-aws-ec2-AUY1105-grupo-3](https://github.com/Ignaciov1/terraform-aws-ec2-AUY1105-grupo-3)"
+  source = "git::[https://github.com/Kuyime/EFT-Modulo-Computo.git?ref=v1.0.0](https://github.com/Kuyime/EFT-Modulo-Computo.git?ref=v1.0.0)"
+
+  # Variables Obligatorias (Dependencias de red)
   subnet_id         = module.redes.public_subnet_1_id
-  security_group_id = module.redes.security_group_ssh_id
+  security_group_id = module.redes.id_sg_ssh
+
+  # Variables Opcionales (Ejemplo de sobrescritura)
+  instance_type = "t2.micro"
+  instance_name = "AUY1105-MiApp-Produccion"
 }
